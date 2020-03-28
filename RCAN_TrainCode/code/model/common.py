@@ -2,19 +2,19 @@ import math
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+import torch.nn.functional as F#这个好处是什么呢？
 
-from torch.autograd import Variable
-
+from torch.autograd import Variable#自动求导模块
+#定义默认卷积函数，返回的是2d卷积
 def default_conv(in_channels, out_channels, kernel_size, bias=True):
     return nn.Conv2d(
         in_channels, out_channels, kernel_size,
         padding=(kernel_size//2), bias=bias)
-
-class MeanShift(nn.Conv2d):
-    def __init__(self, rgb_range, rgb_mean, rgb_std, sign=-1):
-        super(MeanShift, self).__init__(3, 3, kernel_size=1)
-        std = torch.Tensor(rgb_std)
+#定义均值平移类
+class MeanShift(nn.Conv2d):#继承nn.Conv2d
+    def __init__(self, rgb_range, rgb_mean, rgb_std, sign=-1):#定义初始化函数参数包括，自变量和实例参数。
+        super(MeanShift, self).__init__(3, 3, kernel_size=1)#自定义类初始化.使用初始话函数__init__
+        std = torch.Tensor(rgb_std)#将颜色通道的方差转换成张量。
         self.weight.data = torch.eye(3).view(3, 3, 1, 1)
         self.weight.data.div_(std.view(3, 1, 1, 1))
         self.bias.data = sign * rgb_range * torch.Tensor(rgb_mean)
